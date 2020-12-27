@@ -19,6 +19,68 @@ const mockNativeModule = jest.requireMock('../internal/nativeModule').default;
 
 describe('@react-native-community/netinfo fetch', () => {
   describe('with cellular data types', () => {
+    describe('5g cellular generation', () => {
+      function dataProvider() {
+        return [
+          {
+            description:
+              'should resolve the promise correctly with expected 5g settings',
+            expectedConnectionInfo: {
+              type: NetInfoStateType.cellular,
+              isConnected: true,
+              isInternetReachable: true,
+              details: {
+                isConnectionExpensive: true,
+                cellularGeneration: NetInfoCellularGeneration['5g'],
+              },
+            },
+          },
+          {
+            description:
+              'should resolve the promise correctly when 5g returns not connected',
+            expectedConnectionInfo: {
+              type: NetInfoStateType.cellular,
+              isConnected: false,
+              isInternetReachable: true,
+              details: {
+                isConnectionExpensive: true,
+                cellularGeneration: NetInfoCellularGeneration['5g'],
+              },
+            },
+          },
+          {
+            description:
+              'should resolve the promise correctly when 5g returns internet not reachable',
+            expectedConnectionInfo: {
+              type: NetInfoStateType.cellular,
+              isConnected: true,
+              isInternetReachable: false,
+              details: {
+                isConnectionExpensive: true,
+                cellularGeneration: NetInfoCellularGeneration['5g'],
+              },
+            },
+          },
+        ];
+      }
+
+      dataProvider().forEach(testCase => {
+        it(testCase.description, () => {
+          mockNativeModule.getCurrentState.mockResolvedValue(
+            testCase.expectedConnectionInfo,
+          );
+
+          NativeInterface.eventEmitter.emit(
+            DEVICE_CONNECTIVITY_EVENT,
+            testCase.expectedConnectionInfo,
+          );
+          expect(NetInfo.fetch()).resolves.toEqual(
+            testCase.expectedConnectionInfo,
+          );
+        });
+      });
+    });
+
     describe('4g cellular generation', () => {
       function dataProvider() {
         return [

@@ -23,6 +23,7 @@ export enum NetInfoCellularGeneration {
   '2g' = '2g',
   '3g' = '3g',
   '4g' = '4g',
+  '5g' = '5g',
 }
 
 export interface NetInfoConnectedDetails {
