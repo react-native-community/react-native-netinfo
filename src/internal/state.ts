@@ -94,6 +94,10 @@ export default class State {
     }
   };
 
+  public reportConnected(): void {
+    this._internetReachability.reportConnected();
+  }
+
   public latest = (
     requestedInterface?: string,
   ): Promise<Types.NetInfoState> => {

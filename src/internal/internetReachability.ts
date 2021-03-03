@@ -142,6 +142,26 @@ export default class InternetReachability {
     };
   };
 
+  public reportConnected = (): void => {
+    // Cancel any pending check
+    if (this._currentInternetReachabilityCheckHandler !== null) {
+      this._currentInternetReachabilityCheckHandler.cancel();
+      this._currentInternetReachabilityCheckHandler = null;
+    }
+    // Cancel any pending timeout
+    if (this._currentTimeoutHandle !== null) {
+      clearTimeout(this._currentTimeoutHandle);
+      this._currentTimeoutHandle = null;
+    }
+
+    this._setIsInternetReachable(true);
+
+    this._currentTimeoutHandle = setTimeout(
+      this._checkInternetReachability,
+      this._configuration.reachabilityLongTimeout,
+    );
+  };
+
   public update = (state: PrivateTypes.NetInfoNativeModuleState): void => {
     if (typeof state.isInternetReachable === 'boolean') {
       this._setIsInternetReachable(state.isInternetReachable);
