@@ -62,6 +62,9 @@
                     _cellularGeneration = RNCCellularGeneration3g;
                 } else if ([netinfo.currentRadioAccessTechnology isEqualToString:CTRadioAccessTechnologyLTE]) {
                     _cellularGeneration = RNCCellularGeneration4g;
+                } else if ([netinfo.currentRadioAccessTechnology isEqualToString:CTRadioAccessTechnologyNRNSA] ||
+                           [netinfo.currentRadioAccessTechnology isEqualToString:CTRadioAccessTechnologyNR]) {
+                    _cellularGeneration = RNCCellularGeneration5g;
                 }
             }
         }
