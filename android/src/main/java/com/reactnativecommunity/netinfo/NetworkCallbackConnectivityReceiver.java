@@ -13,7 +13,6 @@ import android.net.LinkProperties;
 import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
-import android.net.NetworkRequest;
 import android.os.Build;
 
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -30,18 +29,19 @@ class NetworkCallbackConnectivityReceiver extends ConnectivityReceiver {
     private final ConnectivityNetworkCallback mNetworkCallback;
     Network mNetwork = null;
     NetworkCapabilities mNetworkCapabilities = null;
+    public ConnectivityManager connection;
 
     public NetworkCallbackConnectivityReceiver(ReactApplicationContext reactContext) {
         super(reactContext);
         mNetworkCallback = new ConnectivityNetworkCallback();
+        connection = getConnectivityManager();
     }
 
     @Override
     @SuppressLint("MissingPermission")
     void register() {
         try {
-            NetworkRequest.Builder builder = new NetworkRequest.Builder();
-            getConnectivityManager().registerNetworkCallback(builder.build(), mNetworkCallback);
+            getConnectivityManager().registerDefaultNetworkCallback(mNetworkCallback);
         } catch (SecurityException e) {
             // TODO: Display a yellow box about this
         }
@@ -103,6 +103,10 @@ class NetworkCallbackConnectivityReceiver extends ConnectivityReceiver {
                             && mNetworkCapabilities.hasCapability(
                             NetworkCapabilities.NET_CAPABILITY_VALIDATED)
                             && !isInternetSuspended;
+
+            if (isInternetReachable) {
+                connection.bindProcessToNetwork(null);
+            }
 
             // Get the cellular network type
             if (mNetwork != null && connectionType == ConnectionType.CELLULAR && isInternetReachable) {
